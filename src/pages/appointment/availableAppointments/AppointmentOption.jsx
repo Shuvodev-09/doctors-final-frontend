@@ -1,7 +1,6 @@
 import React from 'react';
-import PrimaryButton from '../../../components/primaryButton/PrimaryButton';
 
-const AppointmentOption = ({ appoinmentOption }) => {
+const AppointmentOption = ({ appoinmentOption, setTreatment }) => {
   const { name, slots } = appoinmentOption;
   return (
     <div>
@@ -12,7 +11,14 @@ const AppointmentOption = ({ appoinmentOption }) => {
           <p className="mt-0 mb-4">
             {slots.length} {slots.length > 1 ? 'Spaces' : 'Space'} Available
           </p>
-          <PrimaryButton>Book Appointment</PrimaryButton>
+
+          <label
+            htmlFor="booking-modal"
+            className="btn btn-primary bg-gradient-to-l from-primary to-secondary text-white"
+            onClick={() => setTreatment(appoinmentOption)}
+          >
+            Book Appointment
+          </label>
         </div>
       </div>
     </div>

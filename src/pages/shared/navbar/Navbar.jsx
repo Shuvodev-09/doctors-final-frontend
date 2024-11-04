@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { AuthContext } from '../../../contexts/AuthProvider';
 
 const Navbar = () => {
+  const { user, logOut } = useContext(AuthContext);
+
   const navItems = (
     <React.Fragment>
       <li>
@@ -55,16 +58,36 @@ const Navbar = () => {
           Contact Us
         </NavLink>
       </li>
-      <li>
-        <NavLink
-          to="/login"
-          className={({ isActive }) =>
-            isActive ? 'text-secondary font-bold' : 'hover:text-secondary'
-          }
-        >
-          Login
-        </NavLink>
-      </li>
+
+      {user?.uid && (
+        <li>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive ? 'text-secondary font-bold' : 'hover:text-secondary'
+            }
+          >
+            Dashboard
+          </NavLink>
+        </li>
+      )}
+
+      {user?.uid ? (
+        <li>
+          <button onClick={logOut}>Sign Out</button>
+        </li>
+      ) : (
+        <li>
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              isActive ? 'text-secondary font-bold' : 'hover:text-secondary'
+            }
+          >
+            Login
+          </NavLink>
+        </li>
+      )}
     </React.Fragment>
   );
 

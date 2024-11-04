@@ -1,11 +1,17 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
 
 const Login = () => {
-  const { name } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || '/';
+
+  const [loginError, setLoginError] = useState('');
+
+  const { signIn } = useContext(AuthContext);
 
   const {
     register,
@@ -13,7 +19,18 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const handleLogin = data => {};
+  const handleLogin = data => {
+    setLoginError('');
+
+    signIn(data.email, data.password)
+      .then(result => {
+        const user = result.user;
+        navigate(from, { replace: true });
+      })
+      .catch(error => {
+        setLoginError(error.message);
+      });
+  };
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -25,7 +42,7 @@ const Login = () => {
     <div className="flex justify-center pb-32">
       <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl mt-32">
         <form onSubmit={handleSubmit(handleLogin)} className="card-body">
-          <h3 className="text-center text-xl font-mono">LOGIN {name}</h3>
+          <h3 className="text-center text-xl font-mono">LOGIN</h3>
           <div className="form-control">
             <label className="label">
               <span className="label-text">Email</span>
@@ -79,6 +96,7 @@ const Login = () => {
               </a>
             </label>
           </div>
+          {loginError && <p className="text-red-600">{loginError}</p>}
           <div className="form-control mt-6">
             <input type="submit" value="LOGIn" className="btn btn-accent" />
           </div>

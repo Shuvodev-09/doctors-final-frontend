@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthProvider';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || '/';
+
+  // get context
+  const { createUser, updateUser } = useContext(AuthContext);
+  // single error
+  const [signUpError, setSignUpError] = useState('');
+
   const {
     register,
     handleSubmit,
@@ -11,13 +22,53 @@ const SignUp = () => {
   } = useForm();
 
   const handleSignUp = data => {
-    console.log(data);
+    setSignUpError('');
+
+    createUser(data.email, data.password)
+      .then(result => {
+        const user = result.user;
+        navigate(from, { replace: true });
+        const updatingUser = {
+          displayName: data.name,
+        };
+        updateUser(updatingUser)
+          .then(() => {
+            savedUserDB(data.name, data.email);
+          })
+          .catch(error => {
+            setSignUpError(error.message);
+          });
+      })
+      .catch(error => {
+        console.log(error);
+        setSignUpError(error.message);
+      });
   };
 
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const savedUserDB = (name, email) => {
+    const user = { name, email };
+    fetch('http://localhost:3000/users', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.acknowledged) {
+          toast.success('Account created successfuly');
+          refetch();
+        } else {
+          toast.error('Failed to create account');
+        }
+      });
   };
 
   return (
@@ -104,6 +155,8 @@ const SignUp = () => {
               </a>
             </label>
           </div>
+
+          {signUpError && <p className="text-red-600">{signUpError}</p>}
 
           <div className="form-control mt-6">
             <input className="btn btn-accent" type="submit" value="SIGN UP" />
