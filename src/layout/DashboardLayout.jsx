@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Navbar from '../pages/shared/navbar/Navbar';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import UseAdmin from '../hooks/UseAdmin';
+import { AuthContext } from '../contexts/AuthProvider';
 
 const DashboardLayout = () => {
   const location = useLocation();
 
+  const { user } = useContext(AuthContext);
+  const [isAdmin, isAdminLoading] = UseAdmin(user?.email);
   return (
     <div>
       <Navbar />
@@ -39,48 +43,52 @@ const DashboardLayout = () => {
                 My Appointments
               </Link>
             </li>
-            <li
-              className={`${
-                location.pathname === '/dashboard/all-users'
-                  ? 'bg-blue-200'
-                  : ''
-              } hover:bg-blue-100`}
-            >
-              <Link
-                to="/dashboard/all-users"
-                className="w-full h-full block p-4"
-              >
-                All Users
-              </Link>
-            </li>
-            <li
-              className={`${
-                location.pathname === '/dashboard/all-users'
-                  ? 'bg-blue-200'
-                  : ''
-              } hover:bg-blue-100`}
-            >
-              <Link
-                to="/dashboard/all-users"
-                className="w-full h-full block p-4"
-              >
-                Add Doctor
-              </Link>
-            </li>
-            <li
-              className={`${
-                location.pathname === '/dashboard/all-users'
-                  ? 'bg-blue-200'
-                  : ''
-              } hover:bg-blue-100`}
-            >
-              <Link
-                to="/dashboard/all-users"
-                className="w-full h-full block p-4"
-              >
-                Manage Doctor
-              </Link>
-            </li>
+            {isAdmin && (
+              <>
+                <li
+                  className={`${
+                    location.pathname === '/dashboard/all-users'
+                      ? 'bg-blue-200'
+                      : ''
+                  } hover:bg-blue-100`}
+                >
+                  <Link
+                    to="/dashboard/all-users"
+                    className="w-full h-full block p-4"
+                  >
+                    All Users
+                  </Link>
+                </li>
+                <li
+                  className={`${
+                    location.pathname === '/dashboard/add-doctor'
+                      ? 'bg-blue-200'
+                      : ''
+                  } hover:bg-blue-100`}
+                >
+                  <Link
+                    to="/dashboard/add-doctor"
+                    className="w-full h-full block p-4"
+                  >
+                    Add A Doctor
+                  </Link>
+                </li>
+                <li
+                  className={`${
+                    location.pathname === '/dashboard/manage-doctor'
+                      ? 'bg-blue-200'
+                      : ''
+                  } hover:bg-blue-100`}
+                >
+                  <Link
+                    to="/dashboard/manage-doctor"
+                    className="w-full h-full block p-4"
+                  >
+                    Manage Doctor
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

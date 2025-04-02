@@ -64,7 +64,6 @@ const SignUp = () => {
       .then(data => {
         if (data.acknowledged) {
           toast.success('Account created successfuly');
-          refetch();
         } else {
           toast.error('Failed to create account');
         }
