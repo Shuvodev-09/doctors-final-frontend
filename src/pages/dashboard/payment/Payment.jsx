@@ -1,5 +1,10 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
+import CheckoutForm from './CheckOutForm';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(import.meta.env.VITE_APP_STRIPE_PK);
 
 const Payment = () => {
   const booking = useLoaderData();
@@ -15,6 +20,11 @@ const Payment = () => {
         on <b>{appoinmentDate}</b>
         at <b>{slot}</b>
       </p>
+      <div>
+        <Elements stripe={stripePromise}>
+          <CheckoutForm booking={booking} />
+        </Elements>
+      </div>
     </div>
   );
 };
